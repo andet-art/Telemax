@@ -1,0 +1,8 @@
+# Node & React Native
+node_modules/
+**/node_modules/
+.dist/
+dist/
+build/
+.env
+*.log
