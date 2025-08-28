@@ -35,6 +35,7 @@ type ApiProduct = {
   price: number;
   originalPrice?: number | null;
   image?: string;
+  image_url?: string;
   rating?: number;
   reviewCount?: number;
   inStock?: boolean;
@@ -162,7 +163,7 @@ export default function EnhancedOrdersPage() {
           description: p.description ?? "",
           price: Number(p.price ?? 0),
           originalPrice: p.originalPrice ?? null,
-          image: p.image ?? "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=300&fit=crop",
+          image: p.image_url ?? "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=300&fit=crop",
           rating: p.rating ?? 4.5,
           reviewCount: p.reviewCount ?? 0,
           inStock: p.inStock ?? true,

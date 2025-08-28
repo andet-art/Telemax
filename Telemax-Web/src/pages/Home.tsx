@@ -2,10 +2,6 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
-// ✅ Sanity Client & Queries
-import { sanity } from "@/lib/sanity";
-import { homeCMSQuery } from "@/lib/queries";
-
 // ✅ Routing & Translations
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -50,13 +46,6 @@ const Home = () => {
   const [selectedImg, setSelectedImg] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
-
-  // 🔹 Sanity CMS Data
-  const [cmsData, setCmsData] = useState<{
-    cmsTitle: string;
-    cmsDescription: string;
-    cmsButton: string;
-  } | null>(null);
 
   // 🔹 Memoized pipe data
   const pipes = useMemo(() => [
@@ -112,51 +101,21 @@ const Home = () => {
     ],
   }), [isMobile]);
 
-  // 🔹 Fetch from Sanity with error handling
-  // replace your Sanity useEffect with this
-useEffect(() => {
-  let cancelled = false;
-
-  const fetchContent = async () => {
-    try {
-      const result = await sanity.fetch(homeCMSQuery);
-      if (!cancelled) setCmsData(result ?? {
-        cmsTitle: "Live Content Editing",
-        cmsDescription: "Easily manage your content using Sanity CMS — no code, no redeploy.",
-        cmsButton: "Connect Sanity CMS",
-      });
-    } catch (error) {
-      console.error("CMS fetch failed:", error);
-      if (!cancelled) {
-        setCmsData({
-          cmsTitle: "Live Content Editing",
-          cmsDescription: "Easily manage your content using Sanity CMS — no code, no redeploy.",
-          cmsButton: "Connect Sanity CMS",
-        });
-      }
-    }
-  };
-
-  fetchContent();
-  return () => { cancelled = true; };
-}, []);
-
-
   // ✅ Optimized smooth scroll with mobile performance
   useEffect(() => {
-    let lenis;
-    let rafId;
+    let lenis: any;
+    let rafId: number | undefined;
     
     if (!isMobile) {
       // Only use Lenis on desktop for better mobile performance
       lenis = new Lenis({
         duration: 1.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
         smoothTouch: false, // Disable smooth touch scrolling
       });
 
-      const raf = (time) => {
+      const raf = (time: number) => {
         lenis.raf(time);
         rafId = requestAnimationFrame(raf);
       };
@@ -190,7 +149,7 @@ useEffect(() => {
 
   // ✅ Optimized GSAP animations with mobile considerations
   useEffect(() => {
-    const elements = gsap.utils.toArray(".reveal");
+    const elements = gsap.utils.toArray(".reveal") as HTMLElement[];
     
     elements.forEach((el) => {
       gsap.fromTo(
@@ -223,12 +182,13 @@ useEffect(() => {
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
       // Use GSAP for desktop for smoother animation
+      // @ts-ignore - scrollTo plugin if available
       gsap.to(window, { duration: 1, scrollTo: 0, ease: "power2.inOut" });
     }
   }, [isMobile]);
 
   // ✅ Image modal handlers with better touch support
-  const openImageModal = useCallback((img) => {
+  const openImageModal = useCallback((img: string) => {
     setSelectedImg(img);
     // Prevent body scroll when modal is open
     document.body.style.overflow = 'hidden';
@@ -357,7 +317,7 @@ useEffect(() => {
               <img
                 src={artisanImg}
                 alt={t("home.section1_img_alt") || "Artisan carving tobacco pipe"}
-                className="w-full max-w-sm sm:max-w-md md:max-w-lg rounded-2xl sm:rounded-3xl object-cover shadow-2xl hover:scale-105 transition-transform duration-500"
+                className="w/full max-w-sm sm:max-w-md md:max-w-lg rounded-2xl sm:rounded-3xl object-cover shadow-2xl hover:scale-105 transition-transform duration-500"
                 loading="lazy"
               />
             </LazyLoad>
@@ -660,19 +620,7 @@ useEffect(() => {
         </div>
       </section>
 
-      {/* ✅ SECTION 8 – Mobile-Optimized CMS Content */}
-      <section className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 bg-[#1a120b] text-center max-w-4xl mx-auto rounded-xl shadow-xl reveal">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 text-white">
-          {cmsData?.cmsTitle || "Live Content Editing"}
-        </h2>
-        <p className="text-stone-400 text-sm sm:text-base md:text-lg mb-8 sm:mb-10 leading-relaxed px-2">
-          {cmsData?.cmsDescription ||
-            "Easily manage your content using Sanity CMS — no code, no redeploy. Update product details, text, and media in real time."}
-        </p>
-        <button className="bg-[#3b2f2f] hover:bg-[#2a1d1d] active:bg-[#1a0f0f] text-white px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 rounded-full text-sm sm:text-base font-medium transition-colors shadow-lg touch-manipulation">
-          {cmsData?.cmsButton || "Connect Sanity CMS"}
-        </button>
-      </section>
+      
 
       {/* ✅ Mobile-Optimized Scroll to Top Button */}
       {showScrollTop && (
