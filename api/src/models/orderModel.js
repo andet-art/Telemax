@@ -28,8 +28,8 @@ export const createOrderWithItems = async ({ user_id, full_name, email, phone, a
     });
 
     const [orderRes] = await conn.query(
-      `INSERT INTO orders (user_id,total_price,full_name,email,phone,address,notes,status,created_at)
-       VALUES (?,?,?,?,?,?,?,'Pending',NOW())`,
+      `INSERT INTO orders (user_id,total_price,name,email,phone,address,notes,status,created_at)
+       VALUES (?,?,?,?,?,?,?,'pending',NOW())`,
       [user_id, total.toFixed(2), full_name, email, phone||null, address, notes||null]
     );
     const order_id = orderRes.insertId;
