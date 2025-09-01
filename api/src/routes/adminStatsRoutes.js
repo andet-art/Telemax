@@ -1,11 +1,10 @@
 import { Router } from 'express';
 import { getAdminStats } from '../controllers/statsController.js';
-import authMiddleware from '../middleware/authMiddleware.js';
-import requireAdmin from '../middleware/requireAdmin.js';
+import { requireAuth, requireAdmin } from '../middleware/auth.js';
 
 const router = Router();
 
 // Admin dashboard stats
-router.get('/', authMiddleware, requireAdmin, getAdminStats);
+router.get('/', requireAuth, requireAdmin, getAdminStats);
 
 export default router;

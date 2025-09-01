@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import authMiddleware from '../middleware/authMiddleware.js';
+import { requireAuth } from '../middleware/auth.js';
 import { getMe, updateMe } from '../controllers/profileController.js';
 
 const router = Router();
-router.get('/', authMiddleware, getMe);
-router.put('/', authMiddleware, updateMe);
+router.get('/', requireAuth, getMe);
+router.put('/', requireAuth, updateMe);
 export default router;

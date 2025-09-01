@@ -1,6 +1,5 @@
 import { Router } from 'express';
-import authMiddleware from '../middleware/authMiddleware.js';
-import requireAdmin from '../middleware/requireAdmin.js';
+import { requireAuth, requireAdmin } from '../middleware/auth.js';
 import {
   adminListProducts,
   adminCreateProduct,
@@ -10,9 +9,9 @@ import {
 
 const router = Router();
 
-router.get('/products', authMiddleware, requireAdmin, adminListProducts);
-router.post('/products', authMiddleware, requireAdmin, adminCreateProduct);
-router.put('/products/:id', authMiddleware, requireAdmin, adminUpdateProduct);
-router.delete('/products/:id', authMiddleware, requireAdmin, adminDeleteProduct);
+router.get('/products', requireAuth, requireAdmin, adminListProducts);
+router.post('/products', requireAuth, requireAdmin, adminCreateProduct);
+router.put('/products/:id', requireAuth, requireAdmin, adminUpdateProduct);
+router.delete('/products/:id', requireAuth, requireAdmin, adminDeleteProduct);
 
 export default router;

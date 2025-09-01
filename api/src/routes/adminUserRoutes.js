@@ -4,18 +4,17 @@ import {
   adminUpdateUserRole,
   adminDeleteUser,
 } from '../controllers/userController.js';
-import authMiddleware from '../middleware/authMiddleware.js';
-import requireAdmin from '../middleware/requireAdmin.js';
+import { requireAuth, requireAdmin } from '../middleware/auth.js';
 
 const router = Router();
 
 // List all users
-router.get('/users', authMiddleware, requireAdmin, adminListUsers);
+router.get('/users', requireAuth, requireAdmin, adminListUsers);
 
 // Update user role (e.g., promote/demote admin)
-router.put('/users/:id/role', authMiddleware, requireAdmin, adminUpdateUserRole);
+router.put('/users/:id/role', requireAuth, requireAdmin, adminUpdateUserRole);
 
 // Delete a user
-router.delete('/users/:id', authMiddleware, requireAdmin, adminDeleteUser);
+router.delete('/users/:id', requireAuth, requireAdmin, adminDeleteUser);
 
 export default router;

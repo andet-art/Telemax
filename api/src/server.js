@@ -26,15 +26,27 @@ applySecurity(app);
 // Health route
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
 
-// Middleware
-app.use(cors({ origin: true, credentials: true }));
+// Middleware - Allow both localhost and IP for development/production
+const corsOptions = {
+  origin: [
+    'http://localhost:3000', 
+    'http://localhost:5173',
+    'http://209.38.231.125:3000',
+    'https://209.38.231.125:3000',
+    'http://209.38.231.125:5173',
+    'https://209.38.231.125:5173'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
 app.use(helmet());
 app.set('trust proxy', 1);
 app.use(rateLimit({ windowMs: 15*60*1000, max: 300 }));
-app.use(express.json());
-
-// Apply security middleware
-applySecurity(app);
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Routes
 app.get('/', (_req, res) => res.json({ status: 'OK', service: 'telemax-api' }));
