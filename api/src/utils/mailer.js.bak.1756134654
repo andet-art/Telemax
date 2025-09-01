@@ -1,0 +1,2 @@
+// src/utils/mailer.js -> re-export from file-mode mailer
+export { sendEmail, sendOrderStatusEmail, sendTrackingEmail } from '../lib/mailer.js';

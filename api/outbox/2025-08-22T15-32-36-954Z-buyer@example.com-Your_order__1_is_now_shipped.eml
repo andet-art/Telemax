@@ -1,0 +1,8 @@
+From: Telemax <no-reply@telemax.local>
+To: buyer@example.com
+Date: Fri, 22 Aug 2025 15:32:36 GMT
+Subject: Your order #1 is now shipped
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+
+<p>Hi Buyer User,</p><p>Your order <b>#1</b> status: <b>shipped</b>.</p>

@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(C:\\Users\\Sevime\\Desktop\\Projects\\Telemax/**)",
+      "Read(C:\\Users\\Sevime\\Desktop\\Projects\\Telemax\\Telemax-Web/**)",
+      "Read(C:\\Users\\Sevime\\Desktop\\Projects\\Telemax\\TelemaxApp/**)",
+      "Read(C:\\Users\\Sevime\\Desktop\\Projects\\Telemax\\TelemaxApp\\src\\components\\cards/**)",
+      "Bash(npm install)",
+      "Read(C:\\Users\\Sevime\\Desktop\\Projects\\Telemax/**)",
+      "Read(C:\\Users\\Sevime\\Desktop\\Projects\\Telemax\\Telemax-Web\\src\\assets/**)",
+      "Read(C:\\Users\\Sevime\\Desktop\\Projects\\Telemax\\Telemax-Web\\public/**)",
+      "Bash(telnet:*)",
+      "Bash(ping:*)",
+      "Bash(node:*)",
+      "Read(C:\\Users\\Sevime\\Documents/**)",
+      "Read(C:\\Users\\Sevime\\Desktop\\Projects\\Telemax/**)",
+      "Read(C:\\Users\\Sevime\\Desktop\\Projects\\Telemax\\Telemax-Web\\src\\pages/**)",
+      "Bash(npm start)",
+      "Read(C:\\Users\\Sevime\\Desktop\\Projects\\Telemax\\Telemax-Web\\src\\lib/**)",
+      "Read(C:\\Users\\Sevime\\Desktop\\Projects\\Telemax\\Telemax-Web\\src\\pages/**)",
+      "Read(C:\\Users\\Sevime\\Desktop\\Projects\\Telemax\\Telemax-Web\\src\\pages/**)",
+      "Bash(curl:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

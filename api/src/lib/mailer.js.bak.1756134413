@@ -1,0 +1,62 @@
+// src/lib/mailer.js  (FORCED FILE MODE)
+import 'dotenv/config';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const OUTBOX = process.env.MAILER_OUTBOX || '/var/www/Telemax/api/outbox';
+const FROM = process.env.SMTP_FROM || 'Telemax <no-reply@telemax.local>';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+function ensureDir(dir) { try { fs.mkdirSync(dir, { recursive: true }); } catch {} }
+
+function makeEml({ to, subject, text, html }) {
+  const date = new Date().toUTCString();
+  return [
+    `From: ${FROM}`,
+    `To: ${to}`,
+    `Date: ${date}`,
+    `Subject: ${subject}`,
+    'MIME-Version: 1.0',
+    'Content-Type: text/html; charset=UTF-8',
+    '',
+    html || `<pre>${text || ''}</pre>`
+  ].join('\r\n');
+}
+
+async function writeMail({ to, subject, text, html }) {
+  ensureDir(OUTBOX);
+  const ts = new Date().toISOString().replace(/[:.]/g, '-');
+  const safeTo = String(to || 'unknown').replace(/[^a-zA-Z0-9_.@-]/g, '_');
+  const safeSubj = String(subject || 'no-subject').replace(/[^a-zA-Z0-9_.-]/g,'_');
+  const filePath = path.join(OUTBOX, `${ts}-${safeTo}-${safeSubj}.eml`);
+  fs.writeFileSync(filePath, makeEml({ to, subject, text, html }), 'utf8');
+  console.log(`[mailer] WROTE ${filePath}`);
+  return { ok: true, path: filePath };
+}
+
+// Generic API (used by 2FA/notifications)
+export async function sendEmail({ to, subject, text, html }) {
+  return writeMail({ to, subject, text, html });
+}
+
+// Specific helpers (used by orders)
+export async function sendOrderStatusEmail(order) {
+  const { email, name, id, status } = order || {};
+  if (!email) return;
+  const subject = `Your order #${id} is now ${status}`;
+  const html = `<p>Hi ${name || ''},</p><p>Your order <b>#${id}</b> status: <b>${status}</b>.</p>`;
+  return writeMail({ to: email, subject, html, text: html.replace(/<[^>]+>/g,'') });
+}
+
+export async function sendTrackingEmail(order) {
+  const { email, name, id, tracking_number } = order || {};
+  if (!email || !tracking_number) return;
+  const subject = `Tracking for order #${id}: ${tracking_number}`;
+  const html = `<p>Hi ${name || ''},</p><p>Your tracking number: <b>${tracking_number}</b>.</p>`;
+  return writeMail({ to: email, subject, html, text: html.replace(/<[^>]+>/g,'') });
+}
+
+console.log(`[mailer] FILE mode active. Outbox: ${OUTBOX}`);

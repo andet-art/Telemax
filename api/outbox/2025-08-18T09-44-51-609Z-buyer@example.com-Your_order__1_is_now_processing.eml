@@ -1,0 +1,8 @@
+From: Telemax <no-reply@telemax.local>
+To: buyer@example.com
+Date: Mon, 18 Aug 2025 09:44:51 GMT
+Subject: Your order #1 is now processing
+MIME-Version: 1.0
+Content-Type: text/html; charset=UTF-8
+
+<p>Hi Buyer User,</p><p>Your order <b>#1</b> status: <b>processing</b>.</p>
