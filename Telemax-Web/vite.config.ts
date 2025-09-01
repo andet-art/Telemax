@@ -12,9 +12,9 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost/telemax', // ✅ root path of your PHP backend
+        target: 'http://localhost:4000', // Node.js API server
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '/api'), // ✅ keeps /api in the path
+        secure: false,
       },
     },
   },
