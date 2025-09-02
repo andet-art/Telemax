@@ -2,16 +2,20 @@ import pool from '../config/db.js';
 
 export const submitContact = async (req, res) => {
   try {
-    const { first_name=null,last_name=null,email=null,subject=null,message } = req.body || {};
+    const { firstName, lastName, email, phone, company, subject, message } = req.body || {};
     if (!message) return res.status(400).json({ error: 'message is required' });
-    const userId = req.user?.id ?? null;
+    if (!firstName) return res.status(400).json({ error: 'first name is required' });
+    if (!lastName) return res.status(400).json({ error: 'last name is required' });
+    if (!email) return res.status(400).json({ error: 'email is required' });
+    if (!subject) return res.status(400).json({ error: 'subject is required' });
+    
     const [r] = await pool.query(
       `INSERT INTO contact (first_name,last_name,email,phone,company,subject,message)
        VALUES (?,?,?,?,?,?,?)`,
-      [first_name, last_name, email, req.body.phone||null, req.body.company||null, subject, message]
+      [firstName, lastName, email, phone||null, company||null, subject, message]
     );
-    res.status(201).json({ ok:true, id:r.insertId });
-  } catch (e) { res.status(500).json({ error:e.message }); }
+    res.status(201).json({ message: 'Contact form submitted successfully', id: r.insertId });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 };
 
 /* ------- Admin ------- */
