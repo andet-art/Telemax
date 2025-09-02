@@ -6,12 +6,11 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "lint": "eslint . --ext .js,.ts",
-    "lint:fix": "eslint . --ext .js,.ts --fix",
+    "lint": "eslint . --ext .js",
+    "lint:fix": "eslint . --ext .js --fix",
     "format": "prettier --write .",
     "test": "jest --watchAll --detectOpenHandles",
-    "build": "tsc",
-    "clean": "rm -rf dist node_modules"
+    "clean": "rm -rf node_modules"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
