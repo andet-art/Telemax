@@ -1,0 +1,8 @@
+{
+  "to": "custom@test.com",
+  "subject": "Order #5 received",
+  "text": "Hi Custom Pipe Customer,\n\nThanks for your order #5.\nTotal: $70.00\n\nItems:\n• Custom set (starter:1, ring:4, top:7) x1 @ 70.00\n\nWe will update you when the status changes.\n— Telemax",
+  "html": "\n    <div style=\"font-family:system-ui,Segoe UI,Arial,sans-serif\">\n      <h2>Thanks for your order #5</h2>\n      <p>Hi Custom Pipe Customer, Thank you for shopping with us.</p>\n      <p><b>Total:</b> $70.00</p>\n      <p><b>Items:</b></p>\n      <ul>\n        <li>Custom (starter:1, ring:4, top:7) &times; 1 @ 70.00</li>\n      </ul>\n      <p>We’ll email you when your order progresses.</p>\n      <p>— Telemax</p>\n    </div>\n  ",
+  "meta": {},
+  "at": "2025-09-02T12:28:11.824Z"
+}

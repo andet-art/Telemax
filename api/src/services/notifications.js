@@ -1,4 +1,4 @@
-import { sendEmail } from '../utils/mailer.js';
+import { sendEmail } from '../lib/mailer.js';
 
 const line = (s='') => s.replace(/\s+/g, ' ').trim();
 
