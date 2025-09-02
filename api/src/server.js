@@ -3,7 +3,6 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import express from 'express';
-import { applySecurity } from './middleware/security.js';
 import authRoutes from './routes/authRoutes.js';
 import twofaRoutes from './routes/twofaRoutes.js';
 import profileRoutes from './routes/profileRoutes.js';
@@ -21,7 +20,6 @@ import adminContactRoutes from './routes/adminContactRoutes.js';
 import adminProductRoutes from './routes/adminProductRoutes.js';
 
 const app = express();
-applySecurity(app);
 
 // Health route
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
@@ -34,7 +32,8 @@ const corsOptions = {
     'http://209.38.231.125:3000',
     'https://209.38.231.125:3000',
     'http://209.38.231.125:5173',
-    'https://209.38.231.125:5173'
+    'https://209.38.231.125:5173',
+    'http://209.38.231.125'
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],

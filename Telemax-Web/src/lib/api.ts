@@ -6,4 +6,5 @@ const BASE =
 
 export const api = axios.create({
   baseURL: BASE,
+  withCredentials: true,
 });
