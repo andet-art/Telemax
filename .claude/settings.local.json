@@ -5,7 +5,10 @@
       "Bash(npm run dev:*)",
       "Bash(curl:*)",
       "Bash(timeout:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(systemctl status:*)",
+      "Bash(netstat:*)",
+      "Bash(ssh:*)"
     ],
     "deny": [],
     "ask": []
