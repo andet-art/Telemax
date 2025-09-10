@@ -62,24 +62,28 @@ const Checkout = () => {
 
     try {
       const payload = {
-        full_name: formData.name,
+        name: formData.name,
         email: formData.email,
         phone: formData.phone,
         address: formData.address,
-        description: formData.description,
-        items: cart.map((item) => ({
-          product_id: item.id,
-          product_type: item.type,
-          name: item.name,
-          color: item.color ?? null,
-          quantity: safeNum(item.quantity),
-          price: safeNum(item.price),
-          line_total: safeNum(item.price) * safeNum(item.quantity),
-          head_id: item.type === "custom" ? item.head?.id ?? null : null,
-          ring_id: item.type === "custom" ? item.ring?.id ?? null : null,
-          tail_id: item.type === "custom" ? item.tail?.id ?? null : null,
-        })),
-        total_price: totalPrice,
+        notes: formData.description,
+        items: cart.map((item) => {
+          if (item.type === "custom") {
+            // Custom item: use starter_id, ring_id, top_id
+            return {
+              starter_id: item.head?.id ?? null,
+              ring_id: item.ring?.id ?? null,  
+              top_id: item.tail?.id ?? null,
+              quantity: safeNum(item.quantity)
+            };
+          } else {
+            // Regular product: use product_id
+            return {
+              product_id: item.id,
+              quantity: safeNum(item.quantity)
+            };
+          }
+        })
       };
 
       // ✅ POST to droplet API (base URL from VITE_API_BASE_URL)
