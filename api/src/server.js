@@ -18,11 +18,12 @@ import adminInventoryRoutes from './routes/adminInventoryRoutes.js';
 import adminExportRoutes from './routes/adminExportRoutes.js';
 import adminContactRoutes from './routes/adminContactRoutes.js';
 import adminProductRoutes from './routes/adminProductRoutes.js';
+import categoryRoutes from './routes/categoryRoutes.js';
+import cartRoutes from './routes/cartRoutes.js';
+import reviewRoutes from './routes/reviewRoutes.js';
+import wishlistRoutes from './routes/wishlistRoutes.js';
 
 const app = express();
-
-// Health route
-app.get('/api/health', (_req, res) => res.json({ ok: true }));
 
 // Middleware - Allow all origins for development (before domain setup)
 const corsOptions = {
@@ -41,6 +42,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Routes
 app.get('/', (_req, res) => res.json({ status: 'OK', service: 'telemax-api' }));
+app.get('/api/health', (_req, res) => res.json({ ok: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/me', profileRoutes);
 app.use('/api/twofa', twofaRoutes);
@@ -56,7 +58,12 @@ app.use('/api/admin', adminInventoryRoutes);
 app.use('/api/admin', adminExportRoutes);
 app.use('/api/admin', adminContactRoutes);
 app.use('/api/admin', adminProductRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/wishlist', wishlistRoutes);
 
-app.listen(process.env.PORT, () => {
-  console.log(`✅ API running on port ${process.env.PORT}`);
+app.listen(process.env.PORT, '0.0.0.0', () => {
+  console.log(`✅ API running on http://0.0.0.0:${process.env.PORT}`);
+  console.log(`🌐 External access: http://209.38.231.125:${process.env.PORT}`);
 });
