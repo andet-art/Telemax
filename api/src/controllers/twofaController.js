@@ -1,7 +1,7 @@
 import pool from '../config/db.js';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import { sendEmail } from '../utils/mailer.js';
+import { sendEmail } from '../lib/mailer.js';
 
 export const request2FA = async (req, res) => {
   try {

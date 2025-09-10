@@ -24,20 +24,12 @@ const app = express();
 // Health route
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
 
-// Middleware - Allow both localhost and IP for development/production
+// Middleware - Allow all origins for development (before domain setup)
 const corsOptions = {
-  origin: [
-    'http://localhost:3000', 
-    'http://localhost:5173',
-    'http://209.38.231.125:3000',
-    'https://209.38.231.125:3000',
-    'http://209.38.231.125:5173',
-    'https://209.38.231.125:5173',
-    'http://209.38.231.125'
-  ],
+  origin: true, // Allow all origins during development
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
 };
 
 app.use(cors(corsOptions));
