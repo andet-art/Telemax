@@ -26,7 +26,7 @@ const Contact = () => {
   setIsSubmitting(true);
 
   try {
-    const response = await fetch("http://209.38.231.125:4000/api/contact", {
+    const response = await fetch("/api/contact", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -86,7 +86,7 @@ const Contact = () => {
         <div className="absolute inset-0 opacity-30" />
       </div>
       <video
-        src="/src/assets/artisan2.mp4"
+        src="/assets/hero-bg-Bxn5OY45.mp4"
         autoPlay
         muted
         loop

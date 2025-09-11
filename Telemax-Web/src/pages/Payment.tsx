@@ -93,7 +93,7 @@ const Payment: React.FC = () => {
             name: orderData.name,
             email: orderData.email,
             address: orderData.address,
-            total: orderData.total,
+            items: [] // Empty items array for payment-only order creation
           });
           if (data?.id) setOrderId(data.id);
         } catch { /* ignore if endpoint not present */ }

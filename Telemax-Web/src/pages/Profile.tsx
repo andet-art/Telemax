@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
-const API = import.meta.env.VITE_API_BASE_URL || "http://209.38.231.125:4000";
+const API = import.meta.env.VITE_API_BASE_URL || "http://209.38.231.125";
 
 type Editable = {
   phone: string;
