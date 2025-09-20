@@ -1,0 +1,1 @@
+-- Generated Pipe Products and Images\n-- Total products: 0\n-- Generated on: 2025-09-20T14:13:50.351Z\n\n-- Insert new products\n

@@ -47,7 +47,7 @@ type ApiProduct = {
   specs?: Record<string, any>;
 };
 
-const categoriesList = ["All", "Wood", "Metal", "Hybrid", "Luxury"];
+// Categories will be fetched dynamically from API
 const sortOptions = [
   { value: "featured", label: "Featured First", icon: Star },
   { value: "price-low", label: "Price: Low to High", icon: ArrowUp },
@@ -104,6 +104,7 @@ export default function EnhancedOrdersPage() {
 
   // Backend products
   const [products, setProducts] = useState<ApiProduct[]>([]);
+  const [categories, setCategories] = useState<string[]>(["All"]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
 
@@ -137,6 +138,30 @@ export default function EnhancedOrdersPage() {
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
   }, []);
+  // Fetch categories from API
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await api.get<any[]>("/api/categories");
+        if (!mounted) return;
+
+        // Extract category names and add "All" at the beginning
+        const categoryNames = (res.data ?? [])
+          .filter(cat => cat.name && cat.name !== 'Parts & Components') // Exclude parts category
+          .map(cat => cat.name)
+          .sort();
+
+        setCategories(["All", ...categoryNames]);
+      } catch (e: any) {
+        console.error('Failed to load categories:', e);
+        // Fallback to default categories if API fails
+        setCategories(["All", "Avery Series", "Nautica Series", "Anchor Series", "Morta"]);
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
+
 
   useEffect(() => {
     const onScroll = throttle(() => {
@@ -148,6 +173,30 @@ export default function EnhancedOrdersPage() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, [lastScrollY]);
+
+  // Function to extract category from product name
+  const getCategoryFromName = (name: string): string => {
+    const lowerName = name.toLowerCase();
+
+    // Check product name patterns to determine category
+    if (lowerName.includes('4th july')) return '4th July';
+    if (lowerName.includes('anchor')) return 'Anchor Series';
+    if (lowerName.includes('avery')) return 'Avery Series';
+    if (lowerName.includes('nautica')) return 'Nautica Series';
+    if (lowerName.includes('hamburg') || lowerName.includes('cumberland')) return 'Hamburg Cumberland';
+    if (lowerName.includes('elbe')) return 'Elbe Series';
+    if (lowerName.includes('mini')) return 'Mini Pipes';
+    if (lowerName.includes('mountain')) return 'Mountain Series';
+    if (lowerName.includes('leaf')) return 'Leaf Pattern';
+    if (lowerName.includes('real horn') || lowerName.includes('horn')) return 'Real Horn';
+    if (lowerName.includes('long')) return 'Long Pipes';
+    if (lowerName.includes('autumn')) return 'Autumn';
+    if (lowerName.includes('black sand')) return 'Black Sand';
+    if (lowerName.includes('hanse')) return 'Hanse';
+    if (lowerName.includes('morta')) return 'Morta';
+
+    return 'Uncategorized';
+  };
 
   // Fetch products from droplet: /api/products
   useEffect(() => {
@@ -170,7 +219,7 @@ export default function EnhancedOrdersPage() {
           featured: p.featured ?? false,
           isNew: p.isNew ?? false,
           isBestseller: p.isBestseller ?? false,
-          category: p.category ?? "Wood",
+          category: p.category ?? getCategoryFromName(p.name),
           tags: p.tags ?? [],
           specs: p.specs ?? {},
         });
@@ -288,7 +337,7 @@ export default function EnhancedOrdersPage() {
         navbarHidden={navbarHidden}
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
-        categoriesList={categoriesList}
+        categoriesList={categories}
         setCurrentPage={() => {}}
         activeSection={activeSection}
         setActiveSection={setActiveSection as any}
@@ -446,7 +495,7 @@ export default function EnhancedOrdersPage() {
                           <div>
                             <label className="block text-sm font-medium text-[#c9a36a] mb-3">Categories</label>
                             <div className="flex flex-wrap gap-2 sm:gap-3">
-                              {categoriesList.map((category) => (
+                              {categories.map((category) => (
                                 <motion.button
                                   key={category}
                                   whileTap={{ scale: 0.95 }}
