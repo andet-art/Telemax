@@ -6,21 +6,18 @@ import {
   ShoppingCart,
   Star,
   Search,
-  Filter,
   Heart,
   X,
   CheckCircle,
   Eye,
-  Plus,
   Grid,
   List,
   Package,
-  TrendingUp,
 } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
 import { useCart } from "../context/CartContext";
 import { api } from "@/lib/api";
-import woodBg from "../assets/wood-bg10.jpg";
+import woodBg from "../assets/artisan3.jpg";
 
 // Backend API types
 interface ApiProduct {
@@ -52,7 +49,7 @@ interface ApiCategory {
   product_count?: number;
 }
 
-// Pipe categories based on directory structure and catalog
+// Pipe categories
 const PIPE_CATEGORIES = [
   { slug: "4th-july", name: "4th July", description: "Patriotic commemorative pipes" },
   { slug: "anchor", name: "Anchor Series", description: "Classic anchor-themed designs" },
@@ -82,14 +79,14 @@ const Toast = ({
   onClose: () => void;
 }) => (
   <motion.div
-    className={`fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-[70] flex items-center gap-3 ${
+    className={`fixed bottom-6 left-6 px-6 py-3 rounded-lg shadow-lg z-[70] flex items-center gap-3 ${
       type === "success"
         ? "bg-[#c9a36a] text-[#1a120b]"
         : "bg-red-800 text-red-100"
     }`}
-    initial={{ opacity: 0, y: -20, x: 20 }}
+    initial={{ opacity: 0, y: 20, x: -20 }}
     animate={{ opacity: 1, y: 0, x: 0 }}
-    exit={{ opacity: 0, y: -20, x: 20 }}
+    exit={{ opacity: 0, y: 20, x: -20 }}
     transition={{ type: "spring", damping: 20, stiffness: 300 }}
   >
     <CheckCircle className="w-5 h-5" />
@@ -100,13 +97,13 @@ const Toast = ({
   </motion.div>
 );
 
-// Product card component
+// Product card
 const ProductCard = ({
   product,
   onAddToCart,
   onToggleFavorite,
   isFavorite,
-  onQuickView
+  onQuickView,
 }: {
   product: ApiProduct;
   onAddToCart: (product: ApiProduct) => void;
@@ -118,7 +115,7 @@ const ProductCard = ({
 
   return (
     <motion.div
-      className="group bg-[#2a1d13] rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-[#c9a36a]/20"
+      className="group bg-[#2a1d13] rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-[#c9a36a]/20"
       whileHover={{ y: -4 }}
       layout
     >
@@ -171,14 +168,7 @@ const ProductCard = ({
           </button>
         </div>
 
-        {/* Stock status */}
-        {!product.inStock && (
-          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-            <span className="bg-red-600 text-white px-4 py-2 rounded-lg font-medium">
-              Out of Stock
-            </span>
-          </div>
-        )}
+        
       </div>
 
       <div className="p-4">
@@ -227,12 +217,12 @@ const ProductCard = ({
   );
 };
 
-// Category card component
+// Category card
 const CategoryCard = ({
   category,
   productCount,
   isSelected,
-  onClick
+  onClick,
 }: {
   category: typeof PIPE_CATEGORIES[0];
   productCount: number;
@@ -253,9 +243,11 @@ const CategoryCard = ({
       <h3 className={`font-semibold font-serif ${isSelected ? "text-[#c9a36a]" : "text-white"}`}>
         {category.name}
       </h3>
-      <span className={`text-sm px-2 py-1 rounded-full ${
-        isSelected ? "bg-[#c9a36a] text-[#1a120b]" : "bg-[#1a120b] text-stone-300"
-      }`}>
+      <span
+        className={`text-sm px-2 py-1 rounded-full ${
+          isSelected ? "bg-[#c9a36a] text-[#1a120b]" : "bg-[#1a120b] text-stone-300"
+        }`}
+      >
         {productCount} pipes
       </span>
     </div>
@@ -267,7 +259,6 @@ const CategoryCard = ({
 
 export default function Orders() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const { addToCart } = useCart();
 
   // State
@@ -284,17 +275,16 @@ export default function Orders() {
   const [selectedProduct, setSelectedProduct] = useState<ApiProduct | null>(null);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
-  // Fetch data from API
+  // Fetch data
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        // Fetch categories and products in parallel
         const [categoriesRes, productsRes] = await Promise.all([
           api.get<ApiCategory[]>("/api/categories"),
-          api.get<ApiProduct[]>("/api/products")
+          api.get<ApiProduct[]>("/api/products"),
         ]);
 
         setCategories(categoriesRes.data || []);
@@ -310,39 +300,30 @@ export default function Orders() {
     fetchData();
   }, []);
 
-  // Helper function to get category from product name (fallback)
   const getCategoryFromName = (name: string): string => {
     const lowerName = name.toLowerCase();
-
     for (const cat of PIPE_CATEGORIES) {
       if (lowerName.includes(cat.slug) || lowerName.includes(cat.name.toLowerCase())) {
         return cat.name;
       }
     }
-
     return "Uncategorized";
   };
 
-  // Get product count for each category
   const getCategoryProductCount = (categoryName: string): number => {
     if (categoryName === "all") return products.length;
-
-    return products.filter(product => {
+    return products.filter((product) => {
       const productCategory = product.category || getCategoryFromName(product.name);
       return productCategory === categoryName;
     }).length;
   };
 
-  // Filter and sort products
   const filteredProducts = products
-    .filter(product => {
-      // Category filter
+    .filter((product) => {
       if (selectedCategory !== "all") {
         const productCategory = product.category || getCategoryFromName(product.name);
         if (productCategory !== selectedCategory) return false;
       }
-
-      // Search filter
       if (searchTerm.trim()) {
         const search = searchTerm.toLowerCase();
         return (
@@ -351,7 +332,6 @@ export default function Orders() {
           (product.category || "").toLowerCase().includes(search)
         );
       }
-
       return true;
     })
     .sort((a, b) => {
@@ -370,38 +350,32 @@ export default function Orders() {
       }
     });
 
-  // Event handlers
   const handleAddToCart = (product: ApiProduct) => {
     addToCart({
       id: product.id,
       name: product.name,
       price: product.price,
       image: product.image || product.image_url || "/images/pipes/placeholder.jpg",
-      quantity: 1
+      quantity: 1,
     });
-
     setToast({ message: `${product.name} added to cart!`, type: "success" });
     setTimeout(() => setToast(null), 3000);
   };
 
   const toggleFavorite = (productId: string | number) => {
-    setFavorites(prev => {
+    setFavorites((prev) => {
       const isCurrentlyFavorite = prev.includes(productId);
-      const product = products.find(p => p.id === productId);
-
+      const product = products.find((p) => p.id === productId);
       if (product) {
         setToast({
           message: isCurrentlyFavorite
             ? `${product.name} removed from favorites`
             : `${product.name} added to favorites!`,
-          type: "success"
+          type: "success",
         });
         setTimeout(() => setToast(null), 3000);
       }
-
-      return isCurrentlyFavorite
-        ? prev.filter(id => id !== productId)
-        : [...prev, productId];
+      return isCurrentlyFavorite ? prev.filter((id) => id !== productId) : [...prev, productId];
     });
   };
 
@@ -445,71 +419,46 @@ export default function Orders() {
       />
 
       <div className="relative z-10">
-        {/* Search and Controls Bar */}
+        {/* Sticky navbar */}
         <div className="bg-[#2a1d13]/90 backdrop-blur-sm border-b border-[#c9a36a]/20 sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16">
-              <div className="flex items-center gap-4">
-                {/* Search */}
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-stone-400 w-4 h-4" />
-                  <input
-                    type="text"
-                    placeholder="Search pipes..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 pr-4 py-2 bg-[#1a120b] border border-[#c9a36a]/30 rounded-lg focus:ring-2 focus:ring-[#c9a36a] focus:border-[#c9a36a] text-white placeholder-stone-400"
-                  />
-                </div>
-
-                {/* Sort */}
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="bg-[#1a120b] border border-[#c9a36a]/30 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#c9a36a] text-white"
-                >
-                  <option value="featured">Featured</option>
-                  <option value="name">Name</option>
-                  <option value="price-low">Price: Low to High</option>
-                  <option value="price-high">Price: High to Low</option>
-                  <option value="newest">Newest</option>
-                </select>
-              </div>
-
-              {/* View Mode */}
-              <div className="flex border border-[#c9a36a]/30 rounded-lg">
-                <button
-                  onClick={() => setViewMode("grid")}
-                  className={`p-2 ${viewMode === "grid" ? "bg-[#c9a36a] text-[#1a120b]" : "text-stone-300 hover:text-[#c9a36a]"}`}
-                >
-                  <Grid className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setViewMode("list")}
-                  className={`p-2 ${viewMode === "list" ? "bg-[#c9a36a] text-[#1a120b]" : "text-stone-300 hover:text-[#c9a36a]"}`}
-                >
-                  <List className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          </div>
+          
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Search & Filters Section */}
+          <div className="bg-[#2a1d13]/90 p-4 mt-16 rounded-xl shadow-md border border-[#c9a36a]/20 mb-10">
+            <div className="flex flex-col sm:flex-row items-center gap-4 justify-between">
+              <div className="relative flex-1 w-full">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-stone-400 w-4 h-4" />
+                <input
+                  type="text"
+                  placeholder="Search pipes..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 bg-[#1a120b] border border-[#c9a36a]/30 rounded-lg focus:ring-2 focus:ring-[#c9a36a] focus:border-[#c9a36a] text-white placeholder-stone-400"
+                />
+              </div>
+
+             
+
+              
+            </div>
+          </div>
+
           {/* Categories */}
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-[#c9a36a] mb-6 text-center">Browse by Category</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
-              {/* All Categories */}
+            <h2 className="text-2xl font-bold text-[#c9a36a] mb-6 font-serif flex items-center gap-2">
+              <Package className="w-6 h-6" />
+              Categories
+            </h2>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <CategoryCard
-                category={{ slug: "all", name: "All Pipes", description: "Browse our complete collection" }}
+                category={{ slug: "all", name: "All Pipes", description: "Browse the full collection" }}
                 productCount={getCategoryProductCount("all")}
                 isSelected={selectedCategory === "all"}
                 onClick={() => setSelectedCategory("all")}
               />
-
-              {/* Individual Categories */}
-              {PIPE_CATEGORIES.map(category => (
+              {PIPE_CATEGORIES.map((category) => (
                 <CategoryCard
                   key={category.slug}
                   category={category}
@@ -521,75 +470,54 @@ export default function Orders() {
             </div>
           </div>
 
-          {/* Results Summary */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-4">
-              <p className="text-stone-300">
-                {filteredProducts.length} pipe{filteredProducts.length !== 1 ? "s" : ""} found
-                {selectedCategory !== "all" && ` in ${selectedCategory}`}
-                {searchTerm && ` for "${searchTerm}"`}
-              </p>
-              {(selectedCategory !== "all" || searchTerm) && (
-                <button
-                  onClick={() => {
-                    setSelectedCategory("all");
-                    setSearchTerm("");
-                  }}
-                  className="text-[#c9a36a] hover:text-[#b8934d] text-sm font-medium"
-                >
-                  Clear filters
-                </button>
-              )}
-            </div>
-          </div>
+          {/* Products */}
+          <div>
+            <h2 className="text-2xl font-bold text-[#c9a36a] mb-6 font-serif flex items-center gap-2">
+              <ShoppingCart className="w-6 h-6" />
+              Products ({filteredProducts.length})
+            </h2>
 
-        {/* Products Grid */}
-        {filteredProducts.length > 0 ? (
-          <div className={`grid gap-6 ${
-            viewMode === "grid"
-              ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-              : "grid-cols-1"
-          }`}>
-            {filteredProducts.map(product => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onAddToCart={handleAddToCart}
-                onToggleFavorite={toggleFavorite}
-                isFavorite={favorites.includes(product.id)}
-                onQuickView={setSelectedProduct}
-              />
-            ))}
+            {filteredProducts.length === 0 ? (
+              <div className="text-center py-12 bg-[#2a1d13]/50 rounded-xl border border-[#c9a36a]/20">
+                <p className="text-stone-300 font-serif">No pipes found matching your criteria.</p>
+              </div>
+            ) : viewMode === "grid" ? (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <AnimatePresence mode="popLayout">
+                  {filteredProducts.map((product) => (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      onAddToCart={handleAddToCart}
+                      onToggleFavorite={toggleFavorite}
+                      isFavorite={favorites.includes(product.id)}
+                      onQuickView={setSelectedProduct}
+                    />
+                  ))}
+                </AnimatePresence>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {filteredProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onAddToCart={handleAddToCart}
+                    onToggleFavorite={toggleFavorite}
+                    isFavorite={favorites.includes(product.id)}
+                    onQuickView={setSelectedProduct}
+                  />
+                ))}
+              </div>
+            )}
           </div>
-          ) : (
-            <div className="text-center py-12">
-              <Package className="w-16 h-16 text-stone-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-white mb-2 font-serif">No pipes found</h3>
-              <p className="text-stone-300 mb-4">
-                Try adjusting your search or browse different categories
-              </p>
-              <button
-                onClick={() => {
-                  setSelectedCategory("all");
-                  setSearchTerm("");
-                }}
-                className="bg-[#c9a36a] text-[#1a120b] px-4 py-2 rounded-lg hover:bg-[#b8934d] font-serif"
-              >
-                View All Pipes
-              </button>
-            </div>
-          )}
         </div>
       </div>
 
       {/* Toast */}
       <AnimatePresence>
         {toast && (
-          <Toast
-            message={toast.message}
-            type={toast.type}
-            onClose={() => setToast(null)}
-          />
+          <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
         )}
       </AnimatePresence>
     </div>
